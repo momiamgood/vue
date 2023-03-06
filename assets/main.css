@@ -87,3 +87,14 @@ textarea {
     color: #16C0B0;
     text-decoration: underline;
 }
+
+
+.btns {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+}
+
+.outOfStock {
+    text-decoration: line-through;
+}
