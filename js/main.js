@@ -1,3 +1,65 @@
+let eventBus = new Vue ()
+
+Vue.component('product-tabs', {
+    props: {
+        reviews: {
+            type: Array,
+            required: false
+        }
+    },
+    template: `
+     <div>   
+       <ul>
+         <span class="tab"
+               :class="{ activeTab: selectedTab === tab }"
+               v-for="(tab, index) in tabs"
+               @click="selectedTab = tab"
+         >{{ tab }}</span>
+       </ul>
+       <div v-show="selectedTab === 'Reviews'">
+         <p v-if="!reviews.length">There are no reviews yet.</p>
+         <ul>
+           <li v-for="review in reviews">
+           <p>{{ review.name }}</p>
+           <p>Rating: {{ review.rating }}</p>
+           <p>{{ review.review }}</p>
+           </li>
+         </ul>
+       </div>
+       <div v-show="selectedTab === 'Make a Review'">
+            <product-review></product-review>
+       </div>
+       <div v-show="selectedTab === 'Details'">
+            <product-info></product-info>
+       </div>
+       <div v-show="selectedTab === 'Shipping'">
+            <p>Shipping: {{ shipping }}</p> 
+       </div>
+       
+     </div>
+
+ `,
+    data() {
+        return {
+            tabs: ['Reviews', 'Make a Review', 'Details', 'Shipping'],
+            selectedTab: 'Reviews'  // устанавливается с помощью @click
+        }
+    },
+    computed: {
+        shipping() {
+            if (this.premium) {
+                return "Free";
+            } else {
+                return 2.99
+            }
+        }
+    }
+})
+
+
+
+
+
 Vue.component('product-review', {
     template: `
 
@@ -39,8 +101,6 @@ Vue.component('product-review', {
                <input id="recommendation" type="radio" value="no" v-model.recommend="recommend">
                
             </div>
-             
-            
              <p>
                <input type="submit" value="Submit"> 
              </p>
@@ -64,7 +124,7 @@ Vue.component('product-review', {
                     rating: this.rating,
                     recommend: this.recommend
                 }
-                this.$emit('review-submitted', productReview)
+                eventBus.$emit('review-submitted', productReview)
                 this.name = null
                 this.review = null
                 this.rating = null
@@ -111,7 +171,6 @@ Vue.component('product', {
                     <li v-for="size in sizes">{{ size }}</li>
                 </ul>
                 <product-info></product-info>
-                <p>Shipping: {{ shipping }}</p> 
                 <div class="btns">
                     <button v-on:click="addToCart" :disabled="!inStock" :class="{ disabledButton: !inStock }"
                     >Add to cart</button>
@@ -119,19 +178,7 @@ Vue.component('product', {
                     >Delete from cart</button>
                 </div>
             </div>
-            <div>
-                <h2>Reviews</h2>
-                    <p v-if="!reviews.length">There are no reviews yet.</p>
-                <ul>
-                  <li v-for="review in reviews">
-                      <p>{{ review.name }}</p>
-                      <p>Rating: {{ review.rating }}</p>
-                      <p>{{ review.review }}</p>
-                      <p>Recommend: {{ review.recommend }}</p>
-                  </li>
-                </ul>
-        </div>
-            <product-review @review-submitted="addReview"></product-review>
+            <product-tabs :reviews="reviews"></product-tabs>
         </div>
 `,
     data() {
@@ -172,9 +219,6 @@ Vue.component('product', {
         updateProduct(index) {
             this.selectedVariant = index;
         },
-        addReview(productReview) {
-            this.reviews.push(productReview)
-        }
     },
     computed: {
         title() {
@@ -188,15 +232,13 @@ Vue.component('product', {
         },
         on_sale() {
             return this.brand + ' ' + this.product + ' ' + " on sale";
-        },
-        shipping() {
-            if (this.premium) {
-                return "Free";
-            } else {
-                return 2.99
-            }
         }
     },
+    mounted() {
+        eventBus.$on('review-submitted', productReview => {
+            this.reviews.push(productReview)
+        })
+    }
 })
 
 
