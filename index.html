@@ -11,9 +11,12 @@
     <title>Product App</title>
 </head>
 <body>
+
     <div id="app">
-        <div class="cart">
-            <p>Cart({{ cart.length }})</p>
+        <div class="nav-bar">
+            <div class="cart" id="cart">
+                <p>Cart({{ cart.length }})</p>
+            </div>
         </div>
         <product :premium="premium" @add-to-cart="updateCart" @del-from-cart="delCart"></product>
     </div>

@@ -35,7 +35,6 @@ Vue.component('product-tabs', {
        <div v-show="selectedTab === 'Shipping'">
             <p>Shipping: {{ shipping }}</p> 
        </div>
-       
      </div>
 
  `,
@@ -56,13 +55,8 @@ Vue.component('product-tabs', {
     }
 })
 
-
-
-
-
 Vue.component('product-review', {
     template: `
-
         <form class="review-form" @submit.prevent="onSubmit">
              <p v-if="errors.length">
              <b>Please correct the following error(s):</b>
@@ -95,7 +89,7 @@ Vue.component('product-review', {
             
             <p>Would you recommend this product?:</p>
             <div class="radio">
-                <label for="yes">Yes</label>
+               <label for="yes">Yes</label>
                <input id="recommendation" type="radio" value="yes" v-model.recommend="recommend">
                <label for="no">No</label>
                <input id="recommendation" type="radio" value="no" v-model.recommend="recommend">
@@ -150,7 +144,10 @@ Vue.component('product', {
     template: `
        <div class="product">
             <div class="product-image">
-                <img :src="image" :alt="altText"/>
+                    <img  
+                    :src="image" :alt="altText" id="img"/>
+                    <img  
+                    :src="image" :alt="altText" id="duplicate"/>
             </div>
             <div class="product-info">
                 <h1>{{ title }}</h1>
@@ -172,7 +169,11 @@ Vue.component('product', {
                 </ul>
                 <product-info></product-info>
                 <div class="btns">
-                    <button v-on:click="addToCart" :disabled="!inStock" :class="{ disabledButton: !inStock }"
+                    <button v-on:click="addToCart"
+                     :disabled="!inStock" 
+                     :class="{ disabledButton: !inStock }"
+                     class="add"
+                     @click="animImg"
                     >Add to cart</button>
                     <button v-on:click="deleteFromCart" :disabled="!inStock" :class="{ disabledButton: !inStock }"
                     >Delete from cart</button>
@@ -219,6 +220,27 @@ Vue.component('product', {
         updateProduct(index) {
             this.selectedVariant = index;
         },
+        animImg(){
+            let img = document.getElementById('img');
+            let img_duplicate = document.getElementById('duplicate');
+            let imgCoords = img.getBoundingClientRect();
+
+            img_duplicate.style.left = imgCoords.left + 'px';
+            img_duplicate.style.right = imgCoords.right + 'px';
+            img_duplicate.style.visibility = 'visible';
+            img_duplicate.classList.add('anim');
+
+            function nullStyles (img, imgCoords) {
+                img.style.left = imgCoords.left + 'px';
+                img.style.right = imgCoords.right + 'px';
+                img.style.visibility = 'hidden';
+                img.classList.remove('anim');
+            }
+
+            setTimeout(nullStyles, 500, img_duplicate, imgCoords);
+
+        }
+
     },
     computed: {
         title() {
