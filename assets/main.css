@@ -31,7 +31,7 @@ img {
 .anim {
     position: absolute;
     animation-name:img-prd;
-    animation-duration: 0.5s;
+    animation-duration: 1s;
 }
 
 .product-image,
@@ -48,15 +48,21 @@ img {
 }
 
 @keyframes img-prd {
-    from {
+    0% {
         width: 80%;
     }
 
-    to {
+    30% {
+        margin-top: -40px;
+        width: 10%;
+    }
+
+    100% {
         margin-top: -60px;
         margin-left: 1325px;
         width: 0;
     }
+
 }
 
 .color-box {

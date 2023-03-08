@@ -237,7 +237,7 @@ Vue.component('product', {
                 img.classList.remove('anim');
             }
 
-            setTimeout(nullStyles, 500, img_duplicate, imgCoords);
+            setTimeout(nullStyles, 1000, img_duplicate, imgCoords);
 
         }
 
